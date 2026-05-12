@@ -19,8 +19,8 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
         String umbrellaNumber, String borrowerName, String borrowerPhone, RentalStatus status
     );
 
-    @Query("SELECT r FROM Rental r JOIN FETCH r.umbrella WHERE r.status = 'RENTED' AND r.rentedAt < :todayStart")
-    List<Rental> findUnreturnedBefore(@Param("todayStart") LocalDateTime todayStart);
+    @Query("SELECT r FROM Rental r JOIN FETCH r.umbrella WHERE r.status = :status AND r.rentedAt < :todayStart")
+    List<Rental> findUnreturnedBefore(@Param("status") RentalStatus status, @Param("todayStart") LocalDateTime todayStart);
 
     long countByStatus(RentalStatus status);
 }
