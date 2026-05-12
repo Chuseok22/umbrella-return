@@ -48,7 +48,7 @@ public class UmbrellaService {
     }
 
     public long countAvailable() {
-        return umbrellaRepository.findByStatusOrderByNumberAsc(UmbrellaStatus.AVAILABLE).size();
+        return umbrellaRepository.countByStatus(UmbrellaStatus.AVAILABLE);
     }
 
     public long countTotal() {

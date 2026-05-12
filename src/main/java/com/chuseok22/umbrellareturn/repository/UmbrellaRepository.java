@@ -11,4 +11,5 @@ public interface UmbrellaRepository extends JpaRepository<Umbrella, Long> {
     List<Umbrella> findAllByOrderByNumberAsc();
     Optional<Umbrella> findByNumber(String number);
     boolean existsByNumber(String number);
+    long countByStatus(UmbrellaStatus status);
 }
