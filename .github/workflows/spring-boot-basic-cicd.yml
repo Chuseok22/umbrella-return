@@ -1,19 +1,18 @@
-name: workflow-name # 워크플로 이름
+name: spring boot cicd
 
 on:
   push:
-    branches: # 워크플로 대상 브랜치
-#      - main
-#      - test
+    branches:
+      - main
 
 env:
-  PROJECT_NAME: my-project # 프로젝트 명
+  PROJECT_NAME: umbrella-return
   DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}
-  APP_IMAGE_SUFFIX: "-back"
-  MAIN_PORT: "8080"
-  TEST_PORT: "8081"
+  APP_IMAGE_SUFFIX: ""
+  MAIN_PORT: "8082"
+  TEST_PORT: "8082"
   APP_EXPOSE_PORT: "8080"
-  MOUNT_DIR: "/volume/project/..."
+  MOUNT_DIR: "/volume1/project/umbrella-return"
   SPRING_PROFILE_MAIN: "prod"
   SPRING_PROFILE_TEST: "prod"
 
@@ -41,13 +40,6 @@ jobs:
         env:
           APPLICATION_PROD_YML: ${{ secrets.APPLICATION_PROD_YML }}
         run: printf '%s' "$APPLICATION_PROD_YML" > src/main/resources/application-prod.yml
-
-      # firebase-adminsdk.json 파일을 빌드 전에 생성
-      # env: 로 먼저 받아 쉘 변수로 전달해야 JSON 내부 " 문자가 쉘 쿼팅을 깨지 않음
-      - name: Create firebase-adminsdk.json from secret
-        env:
-          FIREBASE_ADMINSDK_JSON: ${{ secrets.FIREBASE_ADMINSDK_JSON }}
-        run: printf '%s' "$FIREBASE_ADMINSDK_JSON" > src/main/resources/firebase-adminsdk.json
 
       # 브랜치 별 active profile 설정
       - name: Decide active profile
