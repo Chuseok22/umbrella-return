@@ -4,15 +4,10 @@ spring:
   profiles:
     active: local
   jpa:
-    hibernate:
-      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
 
 aligo:
   api-key: ${ALIGO_API_KEY:test-key}
