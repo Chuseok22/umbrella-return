@@ -2,4 +2,19 @@ spring:
   application:
     name: umbrella-return
   profiles:
-    active: prod
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+aligo:
+  api-key: ${ALIGO_API_KEY:test-key}
+  user-id: ${ALIGO_USER_ID:test-user}
+  sender: ${ALIGO_SENDER:01000000000}
