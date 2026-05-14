@@ -1,6 +1,8 @@
 package com.chuseok22.umbrellareturn.controller;
 
 import com.chuseok22.umbrellareturn.dto.RentForm;
+import com.chuseok22.umbrellareturn.exception.CustomException;
+import com.chuseok22.umbrellareturn.exception.ErrorCode;
 import com.chuseok22.umbrellareturn.service.RentalService;
 import com.chuseok22.umbrellareturn.service.UmbrellaService;
 import org.junit.jupiter.api.Test;
@@ -81,7 +83,7 @@ class RentalControllerTest {
     @Test
     void 대여_서비스_예외_시_에러메시지_표시() throws Exception {
         given(umbrellaService.findAvailable()).willReturn(List.of());
-        willThrow(new IllegalStateException("이미 대여 중인 우산입니다."))
+        willThrow(new CustomException(ErrorCode.UMBRELLA_NOT_AVAILABLE))
             .given(rentalService).rent(any(RentForm.class));
 
         mockMvc.perform(post("/rent")
@@ -91,7 +93,7 @@ class RentalControllerTest {
                 .param("umbrellaNumber", "001"))
             .andExpect(status().isOk())
             .andExpect(view().name("rent"))
-            .andExpect(model().attribute("errorMessage", "이미 대여 중인 우산입니다."));
+            .andExpect(model().attribute("errorMessage", ErrorCode.UMBRELLA_NOT_AVAILABLE.getMessage()));
     }
 
     @Test

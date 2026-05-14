@@ -2,9 +2,12 @@ package com.chuseok22.umbrellareturn.controller;
 
 import com.chuseok22.umbrellareturn.dto.RentForm;
 import com.chuseok22.umbrellareturn.dto.ReturnForm;
+import com.chuseok22.umbrellareturn.exception.CustomException;
 import com.chuseok22.umbrellareturn.service.RentalService;
 import com.chuseok22.umbrellareturn.service.UmbrellaService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class RentalController {
+
+    private static final Logger log = LoggerFactory.getLogger(RentalController.class);
 
     private final RentalService rentalService;
     private final UmbrellaService umbrellaService;
@@ -49,8 +54,9 @@ public class RentalController {
             redirectAttributes.addFlashAttribute("name", rentForm.getBorrowerName());
             redirectAttributes.addFlashAttribute("umbrellaNumber", rentForm.getUmbrellaNumber());
             return "redirect:/complete";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
+        } catch (CustomException e) {
+            log.warn("대여 처리 실패: umbrella={}, code={}", rentForm.getUmbrellaNumber(), e.getErrorCode());
+            model.addAttribute("errorMessage", e.getErrorCode().getMessage());
             model.addAttribute("availableUmbrellas", umbrellaService.findAvailable());
             return "rent";
         }
@@ -78,8 +84,9 @@ public class RentalController {
             redirectAttributes.addFlashAttribute("name", returnForm.getBorrowerName());
             redirectAttributes.addFlashAttribute("umbrellaNumber", returnForm.getUmbrellaNumber());
             return "redirect:/complete";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
+        } catch (CustomException e) {
+            log.warn("반납 처리 실패: umbrella={}, code={}", returnForm.getUmbrellaNumber(), e.getErrorCode());
+            model.addAttribute("errorMessage", e.getErrorCode().getMessage());
             model.addAttribute("rentedUmbrellas", umbrellaService.findRented());
             return "return";
         }

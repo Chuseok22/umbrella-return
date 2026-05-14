@@ -1,8 +1,11 @@
 package com.chuseok22.umbrellareturn.controller.admin;
 
 import com.chuseok22.umbrellareturn.dto.UmbrellaForm;
+import com.chuseok22.umbrellareturn.exception.CustomException;
 import com.chuseok22.umbrellareturn.service.UmbrellaService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin/umbrellas")
 public class AdminUmbrellaController {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminUmbrellaController.class);
 
     private final UmbrellaService umbrellaService;
 
@@ -38,8 +43,9 @@ public class AdminUmbrellaController {
         try {
             umbrellaService.register(umbrellaForm.getNumber());
             redirectAttributes.addFlashAttribute("successMessage", umbrellaForm.getNumber() + "번 우산이 등록되었습니다.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (CustomException e) {
+            log.warn("우산 등록 실패: number={}, code={}", umbrellaForm.getNumber(), e.getErrorCode());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getErrorCode().getMessage());
         }
         return "redirect:/admin/umbrellas";
     }
@@ -49,8 +55,9 @@ public class AdminUmbrellaController {
         try {
             umbrellaService.delete(id);
             redirectAttributes.addFlashAttribute("successMessage", "우산이 삭제되었습니다.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (CustomException e) {
+            log.warn("우산 삭제 실패: id={}, code={}", id, e.getErrorCode());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getErrorCode().getMessage());
         }
         return "redirect:/admin/umbrellas";
     }
