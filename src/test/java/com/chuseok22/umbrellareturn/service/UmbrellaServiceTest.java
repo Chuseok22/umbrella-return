@@ -1,6 +1,8 @@
 package com.chuseok22.umbrellareturn.service;
 
 import com.chuseok22.umbrellareturn.entity.Umbrella;
+import com.chuseok22.umbrellareturn.exception.CustomException;
+import com.chuseok22.umbrellareturn.exception.ErrorCode;
 import com.chuseok22.umbrellareturn.repository.UmbrellaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +26,9 @@ class UmbrellaServiceTest {
         given(umbrellaRepository.existsByNumber("001")).willReturn(true);
 
         assertThatThrownBy(() -> umbrellaService.register("001"))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("이미 등록된");
+            .isInstanceOf(CustomException.class)
+            .extracting(e -> ((CustomException) e).getErrorCode())
+            .isEqualTo(ErrorCode.UMBRELLA_ALREADY_EXISTS);
     }
 
     @Test
@@ -44,7 +47,8 @@ class UmbrellaServiceTest {
         given(umbrellaRepository.findById(1L)).willReturn(Optional.of(rented));
 
         assertThatThrownBy(() -> umbrellaService.delete(1L))
-            .isInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("대여 중인 우산");
+            .isInstanceOf(CustomException.class)
+            .extracting(e -> ((CustomException) e).getErrorCode())
+            .isEqualTo(ErrorCode.UMBRELLA_IN_USE);
     }
 }

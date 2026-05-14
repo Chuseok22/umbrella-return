@@ -4,6 +4,8 @@ import com.chuseok22.umbrellareturn.client.CoolSmsClient;
 import com.chuseok22.umbrellareturn.entity.Rental;
 import com.chuseok22.umbrellareturn.entity.SmsLog;
 import com.chuseok22.umbrellareturn.repository.SmsLogRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -13,6 +15,8 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class SmsService {
+
+    private static final Logger log = LoggerFactory.getLogger(SmsService.class);
 
     private final CoolSmsClient coolSmsClient;
     private final SmsLogRepository smsLogRepository;
@@ -28,6 +32,7 @@ public class SmsService {
     public int sendReminderToAll() {
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         List<Rental> unreturned = rentalService.findUnreturnedBefore(todayStart);
+        log.info("SMS 반납 알림 발송 시작: 대상={}명", unreturned.size());
 
         int successCount = 0;
         for (Rental rental : unreturned) {
@@ -37,6 +42,7 @@ public class SmsService {
             smsLogRepository.save(new SmsLog(rental, rental.getBorrowerPhone(), message, success, response));
             if (success) successCount++;
         }
+        log.info("SMS 반납 알림 발송 완료: 성공={}, 전체={}", successCount, unreturned.size());
         return successCount;
     }
 

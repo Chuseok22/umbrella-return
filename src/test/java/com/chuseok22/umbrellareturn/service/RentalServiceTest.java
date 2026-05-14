@@ -5,6 +5,8 @@ import com.chuseok22.umbrellareturn.dto.ReturnForm;
 import com.chuseok22.umbrellareturn.entity.Rental;
 import com.chuseok22.umbrellareturn.entity.RentalStatus;
 import com.chuseok22.umbrellareturn.entity.Umbrella;
+import com.chuseok22.umbrellareturn.exception.CustomException;
+import com.chuseok22.umbrellareturn.exception.ErrorCode;
 import com.chuseok22.umbrellareturn.repository.RentalRepository;
 import com.chuseok22.umbrellareturn.repository.UmbrellaRepository;
 import org.junit.jupiter.api.Test;
@@ -41,8 +43,9 @@ class RentalServiceTest {
         given(umbrellaRepository.findByNumber("001")).willReturn(Optional.of(rented));
 
         assertThatThrownBy(() -> rentalService.rent(rentForm("001")))
-            .isInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("이미 대여 중");
+            .isInstanceOf(CustomException.class)
+            .extracting(e -> ((CustomException) e).getErrorCode())
+            .isEqualTo(ErrorCode.UMBRELLA_NOT_AVAILABLE);
     }
 
     @Test
@@ -67,7 +70,8 @@ class RentalServiceTest {
         )).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> rentalService.returnUmbrella(form))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("일치하지 않습니다");
+            .isInstanceOf(CustomException.class)
+            .extracting(e -> ((CustomException) e).getErrorCode())
+            .isEqualTo(ErrorCode.RENTAL_NOT_FOUND);
     }
 }

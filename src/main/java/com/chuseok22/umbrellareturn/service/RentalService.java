@@ -5,8 +5,12 @@ import com.chuseok22.umbrellareturn.dto.ReturnForm;
 import com.chuseok22.umbrellareturn.entity.Rental;
 import com.chuseok22.umbrellareturn.entity.RentalStatus;
 import com.chuseok22.umbrellareturn.entity.Umbrella;
+import com.chuseok22.umbrellareturn.exception.CustomException;
+import com.chuseok22.umbrellareturn.exception.ErrorCode;
 import com.chuseok22.umbrellareturn.repository.RentalRepository;
 import com.chuseok22.umbrellareturn.repository.UmbrellaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -15,6 +19,8 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class RentalService {
+
+    private static final Logger log = LoggerFactory.getLogger(RentalService.class);
 
     private final RentalRepository rentalRepository;
     private final UmbrellaRepository umbrellaRepository;
@@ -27,10 +33,10 @@ public class RentalService {
     @Transactional
     public void rent(RentForm form) {
         Umbrella umbrella = umbrellaRepository.findByNumber(form.getUmbrellaNumber())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 우산 번호입니다."));
+            .orElseThrow(() -> new CustomException(ErrorCode.UMBRELLA_NOT_FOUND));
 
         if (!umbrella.isAvailable()) {
-            throw new IllegalStateException("이미 대여 중인 우산입니다.");
+            throw new CustomException(ErrorCode.UMBRELLA_NOT_AVAILABLE);
         }
 
         umbrella.markRented();
@@ -40,24 +46,27 @@ public class RentalService {
             form.getBorrowerPhone(),
             form.getBorrowerStudentId()
         ));
+        log.info("우산 대여 완료: umbrella={}, borrower={}", form.getUmbrellaNumber(), form.getBorrowerName());
     }
 
     @Transactional
     public void returnUmbrella(ReturnForm form) {
         Rental rental = rentalRepository.findByUmbrella_NumberAndBorrowerNameAndBorrowerPhoneAndStatus(
             form.getUmbrellaNumber(), form.getBorrowerName(), form.getBorrowerPhone(), RentalStatus.RENTED
-        ).orElseThrow(() -> new IllegalArgumentException("대여 정보가 일치하지 않습니다."));
+        ).orElseThrow(() -> new CustomException(ErrorCode.RENTAL_NOT_FOUND));
 
         rental.markReturned();
         rental.getUmbrella().markAvailable();
+        log.info("우산 반납 완료: umbrella={}, borrower={}", form.getUmbrellaNumber(), form.getBorrowerName());
     }
 
     @Transactional
     public void adminReturn(Long rentalId) {
         Rental rental = rentalRepository.findById(rentalId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 대여 내역입니다."));
+            .orElseThrow(() -> new CustomException(ErrorCode.RENTAL_RECORD_NOT_FOUND));
         rental.markReturned();
         rental.getUmbrella().markAvailable();
+        log.info("관리자 반납 처리 완료: rentalId={}", rentalId);
     }
 
     public List<Rental> findActiveRentals() {

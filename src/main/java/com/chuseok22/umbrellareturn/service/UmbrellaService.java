@@ -2,7 +2,11 @@ package com.chuseok22.umbrellareturn.service;
 
 import com.chuseok22.umbrellareturn.entity.Umbrella;
 import com.chuseok22.umbrellareturn.entity.UmbrellaStatus;
+import com.chuseok22.umbrellareturn.exception.CustomException;
+import com.chuseok22.umbrellareturn.exception.ErrorCode;
 import com.chuseok22.umbrellareturn.repository.UmbrellaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -10,6 +14,8 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class UmbrellaService {
+
+    private static final Logger log = LoggerFactory.getLogger(UmbrellaService.class);
 
     private final UmbrellaRepository umbrellaRepository;
 
@@ -32,19 +38,21 @@ public class UmbrellaService {
     @Transactional
     public void register(String number) {
         if (umbrellaRepository.existsByNumber(number)) {
-            throw new IllegalArgumentException("이미 등록된 우산 번호입니다: " + number);
+            throw new CustomException(ErrorCode.UMBRELLA_ALREADY_EXISTS);
         }
         umbrellaRepository.save(new Umbrella(number));
+        log.info("우산 등록 완료: number={}", number);
     }
 
     @Transactional
     public void delete(Long id) {
         Umbrella umbrella = umbrellaRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 우산입니다."));
+            .orElseThrow(() -> new CustomException(ErrorCode.UMBRELLA_NOT_FOUND));
         if (!umbrella.isAvailable()) {
-            throw new IllegalStateException("대여 중인 우산은 삭제할 수 없습니다.");
+            throw new CustomException(ErrorCode.UMBRELLA_IN_USE);
         }
         umbrellaRepository.delete(umbrella);
+        log.info("우산 삭제 완료: id={}, number={}", id, umbrella.getNumber());
     }
 
     public long countAvailable() {
