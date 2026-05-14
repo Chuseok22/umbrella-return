@@ -11,8 +11,10 @@ import java.util.Optional;
 
 public interface RentalRepository extends JpaRepository<Rental, Long> {
 
-    List<Rental> findByStatusOrderByRentedAtDesc(RentalStatus status);
+    @Query("SELECT r FROM Rental r JOIN FETCH r.umbrella WHERE r.status = :status ORDER BY r.rentedAt DESC")
+    List<Rental> findByStatusOrderByRentedAtDesc(@Param("status") RentalStatus status);
 
+    @Query("SELECT r FROM Rental r JOIN FETCH r.umbrella ORDER BY r.rentedAt DESC")
     List<Rental> findAllByOrderByRentedAtDesc();
 
     Optional<Rental> findByUmbrella_NumberAndBorrowerNameAndBorrowerPhoneAndStatus(
