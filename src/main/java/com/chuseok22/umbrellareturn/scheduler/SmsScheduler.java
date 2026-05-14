@@ -13,8 +13,8 @@ public class SmsScheduler {
         this.smsService = smsService;
     }
 
-    // 매일 오전 7시에 미반납 우산 보유자에게 SMS 발송
-    @Scheduled(cron = "0 0 7 * * *")
+    // 매일 오전 7시(KST)에 미반납 우산 보유자에게 SMS 발송
+    @Scheduled(cron = "0 0 7 * * *", zone = "Asia/Seoul")
     public void sendDailyReminder() {
         smsService.sendReminderToAll();
     }

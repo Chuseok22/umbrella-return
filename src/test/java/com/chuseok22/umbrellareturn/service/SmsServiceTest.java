@@ -1,6 +1,6 @@
 package com.chuseok22.umbrellareturn.service;
 
-import com.chuseok22.umbrellareturn.client.AligoSmsClient;
+import com.chuseok22.umbrellareturn.client.CoolSmsClient;
 import com.chuseok22.umbrellareturn.entity.Rental;
 import com.chuseok22.umbrellareturn.entity.Umbrella;
 import com.chuseok22.umbrellareturn.repository.SmsLogRepository;
@@ -20,7 +20,7 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class SmsServiceTest {
 
-    @Mock AligoSmsClient aligoSmsClient;
+    @Mock CoolSmsClient coolSmsClient;
     @Mock SmsLogRepository smsLogRepository;
     @Mock RentalService rentalService;
     @InjectMocks SmsService smsService;
@@ -32,7 +32,7 @@ class SmsServiceTest {
 
         given(rentalService.findUnreturnedBefore(any(LocalDateTime.class)))
             .willReturn(List.of(rental));
-        given(aligoSmsClient.send(anyString(), anyString())).willReturn(true);
+        given(coolSmsClient.send(anyString(), anyString())).willReturn("statusCode=2000,messageId=abc123");
         given(smsLogRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
 
         int count = smsService.sendReminderToAll();
@@ -49,6 +49,6 @@ class SmsServiceTest {
         int count = smsService.sendReminderToAll();
 
         assertThat(count).isEqualTo(0);
-        then(aligoSmsClient).shouldHaveNoInteractions();
+        then(coolSmsClient).shouldHaveNoInteractions();
     }
 }

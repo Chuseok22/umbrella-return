@@ -1,6 +1,6 @@
 package com.chuseok22.umbrellareturn.service;
 
-import com.chuseok22.umbrellareturn.client.AligoSmsClient;
+import com.chuseok22.umbrellareturn.client.CoolSmsClient;
 import com.chuseok22.umbrellareturn.entity.Rental;
 import com.chuseok22.umbrellareturn.entity.SmsLog;
 import com.chuseok22.umbrellareturn.repository.SmsLogRepository;
@@ -14,12 +14,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class SmsService {
 
-    private final AligoSmsClient aligoSmsClient;
+    private final CoolSmsClient coolSmsClient;
     private final SmsLogRepository smsLogRepository;
     private final RentalService rentalService;
 
-    public SmsService(AligoSmsClient aligoSmsClient, SmsLogRepository smsLogRepository, RentalService rentalService) {
-        this.aligoSmsClient = aligoSmsClient;
+    public SmsService(CoolSmsClient coolSmsClient, SmsLogRepository smsLogRepository, RentalService rentalService) {
+        this.coolSmsClient = coolSmsClient;
         this.smsLogRepository = smsLogRepository;
         this.rentalService = rentalService;
     }
@@ -32,8 +32,9 @@ public class SmsService {
         int successCount = 0;
         for (Rental rental : unreturned) {
             String message = buildMessage(rental);
-            boolean success = aligoSmsClient.send(rental.getBorrowerPhone(), message);
-            smsLogRepository.save(new SmsLog(rental, rental.getBorrowerPhone(), message, success, null));
+            String response = coolSmsClient.send(rental.getBorrowerPhone(), message);
+            boolean success = CoolSmsClient.isSuccess(response);
+            smsLogRepository.save(new SmsLog(rental, rental.getBorrowerPhone(), message, success, response));
             if (success) successCount++;
         }
         return successCount;

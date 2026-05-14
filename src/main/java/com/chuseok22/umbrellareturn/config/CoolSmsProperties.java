@@ -4,17 +4,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "aligo")
-public class AligoProperties {
+@ConfigurationProperties(prefix = "coolsms")
+public class CoolSmsProperties {
 
     private String apiKey;
-    private String userId;
+    private String apiSecret;
     private String sender;
 
     public String getApiKey() { return apiKey; }
     public void setApiKey(String apiKey) { this.apiKey = apiKey; }
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public String getApiSecret() { return apiSecret; }
+    public void setApiSecret(String apiSecret) { this.apiSecret = apiSecret; }
     public String getSender() { return sender; }
     public void setSender(String sender) { this.sender = sender; }
 }
