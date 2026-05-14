@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('우산 반납')}"></head>
+<body class="min-h-screen bg-base-200 flex items-center justify-center p-4">
+    <div class="card w-full max-w-md bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title text-xl mb-4">우산 반납</h2>
+
+            <div th:if="${errorMessage}" class="alert alert-error mb-4">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <form th:action="@{/return}" th:object="${returnForm}" method="post" class="flex flex-col gap-4">
+                <div class="form-control">
+                    <label class="label"><span class="label-text">이름</span></label>
+                    <input type="text" th:field="*{borrowerName}" placeholder="홍길동"
+                           class="input input-bordered" th:classappend="${#fields.hasErrors('borrowerName')} ? 'input-error'"/>
+                    <span th:if="${#fields.hasErrors('borrowerName')}" th:errors="*{borrowerName}" class="text-error text-sm mt-1"></span>
+                </div>
+
+                <div class="form-control">
+                    <label class="label"><span class="label-text">전화번호</span></label>
+                    <input type="tel" th:field="*{borrowerPhone}" placeholder="01012345678"
+                           class="input input-bordered" th:classappend="${#fields.hasErrors('borrowerPhone')} ? 'input-error'"/>
+                    <span th:if="${#fields.hasErrors('borrowerPhone')}" th:errors="*{borrowerPhone}" class="text-error text-sm mt-1"></span>
+                </div>
+
+                <div class="form-control">
+                    <label class="label"><span class="label-text">우산 번호</span></label>
+                    <select th:field="*{umbrellaNumber}" class="select select-bordered"
+                            th:classappend="${#fields.hasErrors('umbrellaNumber')} ? 'select-error'">
+                        <option value="">우산을 선택하세요</option>
+                        <option th:each="u : ${rentedUmbrellas}"
+                                th:value="${u.number}"
+                                th:text="${u.number} + '번'"></option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('umbrellaNumber')}" th:errors="*{umbrellaNumber}" class="text-error text-sm mt-1"></span>
+                </div>
+
+                <div class="flex gap-2 mt-2">
+                    <a th:href="@{/}" class="btn btn-ghost flex-1">돌아가기</a>
+                    <button type="submit" class="btn btn-primary flex-1">반납하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

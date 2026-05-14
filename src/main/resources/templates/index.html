@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('홈')}"></head>
+<body class="min-h-screen bg-base-200 flex items-center justify-center">
+    <div class="card w-96 bg-base-100 shadow-xl">
+        <div class="card-body items-center text-center gap-6">
+            <h1 class="card-title text-2xl">&#9730; 우산 대여 서비스</h1>
+            <p class="text-base-content/70">인터페이스 동아리 무료 우산 대여</p>
+            <div class="flex flex-col gap-3 w-full">
+                <a th:href="@{/rent}" class="btn btn-primary btn-lg">우산 대여하기</a>
+                <a th:href="@{/return}" class="btn btn-outline btn-lg">우산 반납하기</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/layout :: head('완료')}"></head>
+<body class="min-h-screen bg-base-200 flex items-center justify-center p-4">
+    <div class="card w-full max-w-md bg-base-100 shadow-xl">
+        <div class="card-body items-center text-center gap-4">
+            <div th:if="${type == 'rent'}">
+                <div class="text-5xl mb-2">&#9989;</div>
+                <h2 class="card-title text-xl">대여 완료!</h2>
+                <p class="text-base-content/70">
+                    <span th:text="${name}"></span>님,
+                    <span th:text="${umbrellaNumber}"></span>번 우산을 대여했습니다.
+                </p>
+                <p class="text-sm text-warning">반납 기한을 지켜주세요. 다음날부터 알림이 발송됩니다.</p>
+            </div>
+            <div th:if="${type == 'return'}">
+                <div class="text-5xl mb-2">&#127881;</div>
+                <h2 class="card-title text-xl">반납 완료!</h2>
+                <p class="text-base-content/70">
+                    <span th:text="${name}"></span>님,
+                    <span th:text="${umbrellaNumber}"></span>번 우산을 반납했습니다.
+                </p>
+            </div>
+            <div th:if="${type == null}">
+                <h2 class="card-title text-xl">처리 완료</h2>
+            </div>
+            <a th:href="@{/}" class="btn btn-primary w-full mt-2">처음으로</a>
+        </div>
+    </div>
+</body>
+</html>
