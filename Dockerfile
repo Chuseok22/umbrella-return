@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apk add --no-cache curl
 
 # 빌드된 JAR 파일을 복사
-COPY build/libs/{project-name}-*.jar /app.jar
+COPY build/libs/umbrella-return-*.jar /app.jar
 
 # 애플리케이션 실행 (기본 Spring Boot 설정)
 ENTRYPOINT ["java", "-jar", "/app.jar"]
