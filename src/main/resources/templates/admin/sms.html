@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{admin/layout :: head('SMS 관리')}"></head>
+<body class="bg-base-200 min-h-screen">
+<nav th:replace="~{admin/layout :: navbar}"></nav>
+
+<main class="container mx-auto px-4 py-8 max-w-5xl">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">SMS 관리</h1>
+        <form th:action="@{/admin/sms/send}" method="post"
+              onsubmit="return confirm('현재 미반납자 전체에게 SMS를 발송하시겠습니까?')">
+            <button type="submit" class="btn btn-warning">수동 발송</button>
+        </form>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success mb-4">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error mb-4">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <div class="card bg-base-100 shadow">
+        <div class="card-body">
+            <h2 class="card-title text-lg">발송 내역</h2>
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <thead>
+                        <tr><th>수신자</th><th>메시지</th><th>발송 일시</th><th>결과</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="log : ${smsLogs}">
+                            <td th:text="${log.phone}"></td>
+                            <td class="max-w-xs truncate" th:text="${log.message}"></td>
+                            <td th:text="${#temporals.format(log.sentAt, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td>
+                                <span th:if="${log.success}" class="badge badge-success">성공</span>
+                                <span th:unless="${log.success}" class="badge badge-error">실패</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${smsLogs.isEmpty()}">
+                            <td colspan="4" class="text-center text-base-content/50">발송 내역이 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

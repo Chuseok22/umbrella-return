@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ko">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${title} + ' - 관리자'">관리자</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<nav th:fragment="navbar" class="navbar bg-base-100 shadow-md">
+    <div class="navbar-start">
+        <a th:href="@{/admin}" class="btn btn-ghost text-xl">☂️ 관리자</a>
+    </div>
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1">
+            <li><a th:href="@{/admin/rentals}">대여 현황</a></li>
+            <li><a th:href="@{/admin/history}">이력 조회</a></li>
+            <li><a th:href="@{/admin/umbrellas}">우산 관리</a></li>
+            <li><a th:href="@{/admin/sms}">SMS 관리</a></li>
+        </ul>
+    </div>
+    <div class="navbar-end">
+        <form th:action="@{/admin/logout}" method="post">
+            <button type="submit" class="btn btn-ghost btn-sm">로그아웃</button>
+        </form>
+    </div>
+</nav>
+</html>

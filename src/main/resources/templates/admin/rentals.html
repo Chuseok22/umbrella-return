@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{admin/layout :: head('대여 현황')}"></head>
+<body class="bg-base-200 min-h-screen">
+<nav th:replace="~{admin/layout :: navbar}"></nav>
+
+<main class="container mx-auto px-4 py-8 max-w-5xl">
+    <h1 class="text-2xl font-bold mb-6">대여 현황</h1>
+
+    <div th:if="${successMessage}" class="alert alert-success mb-4">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error mb-4">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <div class="card bg-base-100 shadow">
+        <div class="card-body">
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <thead>
+                        <tr><th>이름</th><th>학번</th><th>전화번호</th><th>우산 번호</th><th>대여 일시</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="r : ${rentals}">
+                            <td th:text="${r.borrowerName}"></td>
+                            <td th:text="${r.borrowerStudentId}"></td>
+                            <td th:text="${r.borrowerPhone}"></td>
+                            <td th:text="${r.umbrella.number}"></td>
+                            <td th:text="${#temporals.format(r.rentedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td>
+                                <form th:action="@{/admin/rentals/{id}/return(id=${r.id})}" method="post"
+                                      onsubmit="return confirm('반납 처리하시겠습니까?')">
+                                    <button type="submit" class="btn btn-success btn-xs">반납 처리</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${rentals.isEmpty()}">
+                            <td colspan="6" class="text-center text-base-content/50">대여 중인 우산이 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
