@@ -25,6 +25,13 @@ class AdminRentalControllerTest {
     @MockitoBean UmbrellaService umbrellaService;
 
     @Test
+    void 로그인_페이지_접근() throws Exception {
+        mockMvc.perform(get("/admin/login"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("admin/login"));
+    }
+
+    @Test
     void 대시보드_접근() throws Exception {
         given(umbrellaService.countTotal()).willReturn(5L);
         given(umbrellaService.countAvailable()).willReturn(3L);

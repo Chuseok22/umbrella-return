@@ -19,6 +19,11 @@ public class AdminDashboardController {
         this.rentalService = rentalService;
     }
 
+    @GetMapping("/login")
+    public String loginPage() {
+        return "admin/login";
+    }
+
     @GetMapping
     public String dashboard(Model model) {
         model.addAttribute("totalUmbrellas", umbrellaService.countTotal());
