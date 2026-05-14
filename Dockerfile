@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 # 작업 디렉토리 설정
 WORKDIR /app
